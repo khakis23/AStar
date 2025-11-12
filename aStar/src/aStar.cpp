@@ -1,8 +1,10 @@
 #include "aStar.h"
 
 
-AStar::AStar() {
-    path = {};
+AStar::AStar(std::vector<std::vector<bool>>* map) : path({}){
+    if (map)
+        grid = *map;
+    // grid_size = {grid.size(), grid[0].size()};
 }
 
 void AStar::printMap() const {

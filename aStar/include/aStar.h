@@ -1,7 +1,3 @@
-//
-// Created by Tyler Black on 11/11/25.
-//
-
 #ifndef A__ASTAR_H
 #define A__ASTAR_H
 #include <iostream>
@@ -45,7 +41,8 @@ struct Vec2Hash {
 class AStar {
     std::unordered_set<Vec2, Vec2Hash> path;
     std::deque<Node> pool;
-    bool grid[10][10] = {
+    Vec2 grid_size;
+    std::vector<std::vector<bool>> grid = {
         {1,1,1,1,1,1,1,1,1,1},
         {1,0,0,0,1,0,0,0,0,1},
         {1,0,1,0,1,0,1,1,0,1},
@@ -74,13 +71,10 @@ class AStar {
     std::vector<Vec2> getNeighbors(Vec2 pos) const;
     std::unordered_set<Vec2, Vec2Hash> reconstructPath(const Node* node) const;
 public:
-    AStar();
+    AStar(std::vector<std::vector<bool>>* map = nullptr);
     void printMap() const;
     void find(const Vec2 &start, Vec2 end);
 };
-
-
-
 
 
 #endif //A__ASTAR_H

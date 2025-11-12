@@ -6,7 +6,7 @@
  *  1. Vec2 coordinates are backwards cuz [row][col]
  *  2. Corner toggle?
  *  3. Organize this shit!
- *  4.
+ *  4. Ipliment grid size
  */
 
 
