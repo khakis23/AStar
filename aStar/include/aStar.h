@@ -130,11 +130,12 @@ private:
     unsigned int steps = 0;
 
 
-    /*** A* Helper Methods ***/
+    /*** A* Helper & Getter Methods ***/
 
     [[nodiscard]] unsigned int getHeuristic(Vec2 cur, Vec2 des) const;
     [[nodiscard]] unsigned int moveCost(Vec2 x, Vec2 y) const;
     [[nodiscard]] bool validVec(const Vec2& v) const;
+    [[nodiscard]] unsigned int getSteps() const;
 
 
     /**

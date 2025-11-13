@@ -1,11 +1,6 @@
-//
-// Created by Tyler Black on 11/12/25.
-//
-
 #ifndef A__PREDEFINEDGRIDS_H
 #define A__PREDEFINEDGRIDS_H
 #include <iostream>
-#include <ostream>
 #include <vector>
 
 
@@ -19,7 +14,7 @@ inline const Grid a = {
     {1,0,1,0,0,0,0,1,0,1},
     {1,0,1,1,1,1,0,1,0,1},
     {1,0,0,0,0,1,0,1,0,1},
-    {1,1,1,1,0,1,0,1,0,1},
+    {1,1,1,1,0,1,1,1,0,1},
     {1,0,0,1,0,0,0,1,0,1},
     {1,0,1,1,1,1,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1}};

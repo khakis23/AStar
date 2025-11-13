@@ -5,15 +5,14 @@
  * TODO:
  *  - test/presentation program
  *  - Corner toggle??
- *  - check stalemate condition
  */
 
 
 int main() {
-    AStar astar('f');
+    AStar astar('a');
     astar.printMap();
-    astar.setHeuristic(EUCLIDEAN);
-    astar.find({1, 1}, {25, 27}, true);
+    // astar.setHeuristic(EUCLIDEAN);
+    astar.find({1, 1}, {8, 8}, true);
     // astar.printMap();
 
     return 0;

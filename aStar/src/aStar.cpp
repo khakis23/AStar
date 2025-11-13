@@ -67,6 +67,7 @@ std::unordered_set<Vec2, Vec2Hash> AStar::find(const Vec2 &start, const Vec2 &en
     std::priority_queue<Node*, std::vector<Node*>, CompareF> open_q;   // min heap
     std::unordered_set<Vec2, Vec2Hash> open_set;   // keep track of what's already in priority queue
     std::unordered_set<Vec2, Vec2Hash> closed;   // everything that's already been evaluated
+    steps = 0;
 
     // first node
     Node start_node = {0, 0, 0,
@@ -83,8 +84,6 @@ std::unordered_set<Vec2, Vec2Hash> AStar::find(const Vec2 &start, const Vec2 &en
         Node* cur = open_q.top();
         open_q.pop();
         steps++;
-
-        // TODO STALEMATE?
 
         // print live ("animated")
         if (live_print) {
@@ -124,6 +123,7 @@ std::unordered_set<Vec2, Vec2Hash> AStar::find(const Vec2 &start, const Vec2 &en
             }
         }
     }
+    // all possible spaces have been evaluated
     std::cout << color::RED << "No path was found. Steps: " << steps << color::RESET << std::endl;
     return {};
 }
@@ -162,6 +162,10 @@ bool AStar::validVec(const Vec2& v) const {
     if (grid[v.y][v.x])
         return false;
     return true;
+}
+
+unsigned int AStar::getSteps() const {
+    return steps;
 }
 
 
