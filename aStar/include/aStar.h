@@ -4,11 +4,14 @@
 #include <iostream>
 #include <queue>
 #include <unordered_set>
+#include <chrono>
+#include <thread>
+#include "PreDefinedGrids.h"
 
-// NOTE: blocks: ▓, ▒, ░
 
-
+/**************************/
 /***** HELPER STRUCTS *****/
+/**************************/
 
 struct Vec2 {
     int x = 0;
@@ -17,7 +20,6 @@ struct Vec2 {
         return x == other.x && y == other.y;
     }
 };
-
 
 struct Node {
     unsigned int g;   // distance from start
@@ -35,7 +37,7 @@ struct CompareF {
     }
 };
 
-// overload set for hasing pair
+// overload set for hashing pair
 struct Vec2Hash {
     size_t operator()(const Vec2 &pos) const {
         return std::hash<int>()(pos.x) ^ (std::hash<int>()(pos.y) << 1);
@@ -43,7 +45,32 @@ struct Vec2Hash {
 };
 
 
+// for getHeuristic
+enum Heuristic {
+    EUCLIDEAN,
+    MANHATTAN,
+};
+
+
+// colors for console printing
+namespace color {
+    inline auto RESET = "\033[0m";
+    inline auto BLACK = "\033[30m";
+    inline auto WHITE = "\033[37m";
+    inline auto YELLOW = "\033[33m";
+    inline auto GREEN = "\033[32m";
+    inline auto RED = "\033[31m";
+}
+
+
+// helper funcs
+void clearScreen();   // for printMap()
+std::vector<Vec2> getNeighbors(Vec2 pos);   // for find()
+
+
+/******************************/
 /***** A* CLASS INTERFACE *****/
+/******************************/
 
 /**
  * @class AStar
@@ -51,27 +78,45 @@ struct Vec2Hash {
  */
 class AStar {
 public:
+
     /**
      * @param predef Pre-defined map/grid from "PreDefinedGrids.h"
      */
     AStar(char predef = 'a');
+
 
     /**
      * @param map Custom map/grid. Map can be n x m.
      */
     AStar(const std::vector<std::vector<bool>> &map);
 
-    /**
-     * TODO
-     */
-    void printMap() const;
 
     /**
-     * TODO
-     * @param start
-     * @param end
+     * @brief Print map using path attribute.
+     *
+     * @param open_set (optional) pass in open_set* to see "attempted" path nodes.
      */
-    void find(const Vec2 &start, const Vec2 &end);
+    void printMap(const std::unordered_set<Vec2, Vec2Hash>* open_set=nullptr) const;
+
+
+    /**
+     * @brief Set the heuristic equation use for path finding.
+     *
+    * @param h use EUCLIDEAN or MANHATTAN (default) equation
+     */
+    void setHeuristic(Heuristic h);
+
+
+    /**
+     * @brief Use A* algorithm to try to find the shortest path from one coordinate to another.
+     *
+     * @param start staring coordinate (x,y)
+     * @param end ending coordinate (x,y)
+     * @param live_print (optional) print each frame of the path finding, including "attempted" nodes
+     *
+     * @returns path
+     */
+    std::unordered_set<Vec2, Vec2Hash> find(const Vec2 &start, const Vec2 &end, bool live_print=false);
 
 private:
 
@@ -81,12 +126,23 @@ private:
     std::deque<Node> pool;
     Vec2 grid_size;
     std::vector<std::vector<bool>> grid;
-    bool validVec(const Vec2& v) const;
+    Heuristic h_eq = MANHATTAN;
+    unsigned int steps = 0;
+
 
     /*** A* Helper Methods ***/
 
-    [[nodiscard]] unsigned int getHMan(Vec2 cur, Vec2 des) const;
+    [[nodiscard]] unsigned int getHeuristic(Vec2 cur, Vec2 des) const;
     [[nodiscard]] unsigned int moveCost(Vec2 x, Vec2 y) const;
+    [[nodiscard]] bool validVec(const Vec2& v) const;
+
+
+    /**
+     * @brief Get the path from current node back to start node.
+     *
+     * @param node last/current node
+     * @return path
+     */
     std::unordered_set<Vec2, Vec2Hash> reconstructPath(const Node* node) const;
 };
 
