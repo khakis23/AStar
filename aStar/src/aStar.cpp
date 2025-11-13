@@ -1,18 +1,30 @@
 #include "aStar.h"
+#include "PreDefinedGrids.h"
 
 
-AStar::AStar(std::vector<std::vector<bool>>* map) : path({}){
-    if (map)
-        grid = *map;
-    // grid_size = {grid.size(), grid[0].size()};
+AStar::AStar(const std::vector<std::vector<bool>> &map) : path({}), grid(map){
+    grid_size.x = grid[0].size();
+    grid_size.y = grid.size();
+}
+
+AStar::AStar(char ch) : path({}){
+    try {
+        grid = getGrid(ch);
+    }
+    catch (std::runtime_error& e) {
+        std::cout << e.what() << std::endl;
+        return;
+    }
+    grid_size.x = grid[0].size();
+    grid_size.y = grid.size();
 }
 
 void AStar::printMap() const {
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++) {
-            if (grid[i][j])
+    for (int i = 0; i < grid_size.x; i++) {
+        for (int j = 0; j < grid_size.y; j++) {
+            if (grid[j][i])
                 std::cout << "▒▒";
-            else if (path.contains(Vec2{i, j}))
+            else if (path.contains(Vec2{j, i}))
                 std::cout << "██";
             else
                 std::cout << "  ";
@@ -24,7 +36,7 @@ void AStar::printMap() const {
 std::unordered_set<Vec2, Vec2Hash> AStar::reconstructPath(const Node* node) const {
     std::unordered_set<Vec2, Vec2Hash> path;
     while (node) {
-        std::cout << node->pos.x << ", " << node->pos.y << std::endl;
+        // std::cout << node->pos.x << ", " << node->pos.y << std::endl;
         path.insert(node->pos);
         node = node->parent;
     }
@@ -39,7 +51,7 @@ unsigned int AStar::moveCost(Vec2 a, Vec2 b) const {
     return std::abs(a.x - b.x) + std::abs(a.y - b.y) == 2 ? std::sqrt(2.0) * 10 : 10;
 }
 
-std::vector<Vec2> AStar::getNeighbors(Vec2 pos) const {
+std::vector<Vec2> getNeighbors(Vec2 pos) {
     return {
             {pos.x + 1, pos.y - 1},
             {pos.x + 1, pos.y},
@@ -51,15 +63,23 @@ std::vector<Vec2> AStar::getNeighbors(Vec2 pos) const {
             {pos.x, pos.y + 1}};
 }
 
-void AStar::find(const Vec2 &start, Vec2 end) {
-    std::priority_queue<Node*, std::vector<Node*>, CompareF> open_q;   // min heap
-    std::unordered_set<Vec2, Vec2Hash> open_set;
-    std::unordered_set<Vec2, Vec2Hash> closed;
+void AStar::find(const Vec2 &start, const Vec2 &end) {
+    // safety check for coordinates
+    if (!validVec(start)) {
+        std::cerr << "Invalid starting coordinate." << std::endl;
+        return;
+    }
+    if (!validVec(end)) {
+        std::cerr << "Invalid ending coordinate." << std::endl;
+        return;
+    }
 
-    Node start_node = {
-        0,
-        0,
-        0,
+    std::priority_queue<Node*, std::vector<Node*>, CompareF> open_q;   // min heap
+    std::unordered_set<Vec2, Vec2Hash> open_set;   // keep track of what's already in priority queue
+    std::unordered_set<Vec2, Vec2Hash> closed;   // everything thats already been evaluated
+
+    // first node
+    Node start_node = {0, 0, 0,
         start,
         nullptr
     };
@@ -71,9 +91,8 @@ void AStar::find(const Vec2 &start, Vec2 end) {
     while (!open_q.empty()) {
         Node* cur = open_q.top();
         open_q.pop();
-        // pool.push_back(*cur);
 
-        // TODO check stale entry?
+        // TODO check stalemate??
 
         // got to the end
         if (cur->pos == end) {
@@ -87,15 +106,18 @@ void AStar::find(const Vec2 &start, Vec2 end) {
         open_set.erase(cur->pos);
 
         for (auto neighbor : getNeighbors(cur->pos)) {
-            if (neighbor.x < 0 || neighbor.x >= 10 || neighbor.y < 0 || neighbor.y >= 10)
+            // check collision
+            if (neighbor.x < 0 || neighbor.x >= grid_size.x || neighbor.y < 0 || neighbor.y >= grid_size.y)   //...with wall
                 continue;
-            if (grid[neighbor.x][neighbor.y])
+            if (grid[neighbor.y][neighbor.x])   //...with obstacle
                 continue;
 
-            auto h_cost = getHMan(neighbor, end);
-            auto g_cost = cur->g + moveCost(cur->pos, neighbor);
-            auto f_cost = g_cost + h_cost;
+            // calculate this neighbor's costs
+            const auto h_cost = getHMan(neighbor, end);
+            const auto g_cost = cur->g + moveCost(cur->pos, neighbor);
+            const auto f_cost = g_cost + h_cost;
 
+            // add to queue if neighbor is not in it already
             if (!open_set.contains(neighbor) && !closed.contains(neighbor)) {
                 open_set.insert(neighbor);
                 pool.push_back({g_cost, h_cost, f_cost, neighbor, cur});
@@ -103,4 +125,13 @@ void AStar::find(const Vec2 &start, Vec2 end) {
             }
         }
     }
+}
+
+
+bool AStar::validVec(const Vec2& v) const {
+    if (v.x == grid_size.x || v.y == grid_size.y || v.x < 0 || v.y <0)
+        return false;
+    if (grid[v.y][v.x])
+        return false;
+    return true;
 }
