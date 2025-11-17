@@ -52,6 +52,10 @@ void AStar::setHeuristic(const Heuristic h) {
     h_eq = h;
 }
 
+void AStar::setLivePrintSpeed(const unsigned int ms) {
+    live_print_speed = ms;
+}
+
 std::unordered_set<Vec2, Vec2Hash> AStar::find(const Vec2 &start, const Vec2 &end, bool live_print) {
     // safety check for coordinates
     if (!validVec(start)) {
@@ -89,7 +93,7 @@ std::unordered_set<Vec2, Vec2Hash> AStar::find(const Vec2 &start, const Vec2 &en
         if (live_print) {
             path = reconstructPath(cur);
             printMap(&open_set);
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(live_print_speed));
         }
 
         // got to the end

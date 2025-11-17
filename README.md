@@ -1,6 +1,8 @@
 # A* Pathfinding Algorithm
 ### Author: Tyler Black
-IDK... something something something
+A fast lightweight implementation of the A* pathfinding algorithm in C++,
+designed to be easily integrated into larger applications, with optional
+terminal visualization.
 
 ## How A* Works
 The A* search algorithm is a widely used pathfinding algorithm. On a high
@@ -30,7 +32,7 @@ but the most common are Manhattan Distance and Euclidean Distance.
 
 $f(n)$ is the total cost of a node from the start node to the goal node,
 unlike Dijkstra's Algorithm which only considers the cost from the start node
-to the current node. Having a total cost, allow the algorithm to make a 
+to the current node. Having a total cost allows the algorithm to make a 
 simple comparison. If one node has a lower f-score than another, then it is
 considered to be a better path, and the higher cost node does not need to be
 evaluated. This mechanism enables A* to discard large portions of the graph, 
@@ -49,4 +51,13 @@ mitigating the exponential growth of Dijkstra's Algorithm.
 ![A* Pathfinding Algorithm](/assets/A*GifExample.gif)
 
 ## How to Build
-TODO
+
+This project uses CMake, and there are no external dependencies. 
+
+To build:
+
+```bash
+    mkdir build
+    cd build
+    cmake ..
+    make

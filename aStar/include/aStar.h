@@ -106,6 +106,12 @@ public:
      */
     void setHeuristic(Heuristic h);
 
+    /**
+     * @breif set time between frames for Live Print
+     *
+     * @param ms time between frames in ms
+     */
+    void setLivePrintSpeed(unsigned int ms);
 
     /**
      * @brief Use A* algorithm to try to find the shortest path from one coordinate to another.
@@ -128,6 +134,7 @@ private:
     std::vector<std::vector<bool>> grid;
     Heuristic h_eq = MANHATTAN;
     unsigned int steps = 0;
+    unsigned int live_print_speed = 250;
 
 
     /*** A* Helper & Getter Methods ***/
