@@ -28,7 +28,7 @@ AStar::AStar(char ch) : path({}){
 /***** PUBLIC *****/
 /******************/
 
-void AStar::printMap(const std::unordered_set<Vec2, Vec2Hash>* open_set) const {
+void AStar::printMap(const std::unordered_set<Vec2, Vec2Hash>* open_set, const std::unordered_set<Vec2, Vec2Hash>* closed_set) const {
     using namespace color;
     clearScreen();
 
@@ -40,6 +40,8 @@ void AStar::printMap(const std::unordered_set<Vec2, Vec2Hash>* open_set) const {
                 std::cout << GREEN << "██";
             else if (open_set && open_set->contains(Vec2{x, y}))   // only prints if open_set is not null
                 std::cout << YELLOW << "██";
+            else if (closed_set && closed_set->contains(Vec2{x, y}))
+                std::cout << RED << "██";
             else
                 std::cout << WHITE << "██";
             std::cout << RESET;
@@ -92,7 +94,7 @@ std::unordered_set<Vec2, Vec2Hash> AStar::find(const Vec2 &start, const Vec2 &en
         // print live ("animated")
         if (live_print) {
             path = reconstructPath(cur);
-            printMap(&open_set);
+            printMap(&open_set, &closed);
             std::this_thread::sleep_for(std::chrono::milliseconds(live_print_speed));
         }
 
@@ -138,10 +140,15 @@ std::unordered_set<Vec2, Vec2Hash> AStar::find(const Vec2 &start, const Vec2 &en
 /*******************/
 
 unsigned int AStar::getHeuristic(Vec2 cur, Vec2 des) const {   // Manhattan h(n)
+    // scaled by 10
     if (h_eq == MANHATTAN)
         return (std::abs(cur.x - des.x) + std::abs(cur.y - des.y)) * 10;
     if (h_eq == EUCLIDEAN)
-        return std::sqrt(std::pow((cur.x-des.x), 2) + std::pow((cur.x-des.x), 2));
+        return std::sqrt(std::pow((cur.x-des.x), 2) + std::pow((cur.y-des.y), 2)) * 10;
+    if (h_eq == CHEBYSHEV)
+        return std::max(std::abs(cur.x - des.x), std::abs(cur.y - des.y)) * 10;
+    if (h_eq == NONE)
+        return 0;
     std::cerr << "Invalid heuristic." << std::endl;
     return -1;
 }
@@ -161,7 +168,7 @@ std::unordered_set<Vec2, Vec2Hash> AStar::reconstructPath(const Node* node) cons
 }
 
 bool AStar::validVec(const Vec2& v) const {
-    if (v.x == grid_size.x || v.y == grid_size.y || v.x < 0 || v.y <0)
+    if (v.x >= grid_size.x || v.y >= grid_size.y || v.x < 0 || v.y <0)
         return false;
     if (grid[v.y][v.x])
         return false;

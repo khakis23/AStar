@@ -49,6 +49,8 @@ struct Vec2Hash {
 enum Heuristic {
     EUCLIDEAN,
     MANHATTAN,
+    CHEBYSHEV,
+    NONE,
 };
 
 
@@ -58,8 +60,8 @@ namespace color {
     inline auto BLACK = "\033[30m";
     inline auto WHITE = "\033[37m";
     inline auto YELLOW = "\033[33m";
-    inline auto GREEN = "\033[32m";
-    inline auto RED = "\033[31m";
+    inline auto GREEN = "\033[38;2;34;139;34m";
+    inline auto RED = "\033[38;2;128;32;32m";
 }
 
 
@@ -94,9 +96,10 @@ public:
     /**
      * @brief Print map using path attribute.
      *
-     * @param open_set (optional) pass in open_set* to see "attempted" path nodes.
+     * @param open_set (optional) pass in open_set* to see "potential" path nodes.
+     * @param closed_set (optional) pass in closed_set* to see "already evaluated" nodes.
      */
-    void printMap(const std::unordered_set<Vec2, Vec2Hash>* open_set=nullptr) const;
+    void printMap(const std::unordered_set<Vec2, Vec2Hash>* open_set=nullptr, const std::unordered_set<Vec2, Vec2Hash>* closed_set=nullptr) const;
 
 
     /**
