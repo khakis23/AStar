@@ -9,7 +9,7 @@ terminal visualization.
 A* is a shortest-path search algorithm that finds an efficient route between two
 points by combining the actual distance traveled with an estimate of the distance
 remaining. Brute-force search grows exponentially—approximately $b^d$ states for
-branching factor $b$ and depth $d$—so A* reduces the search effort by expanding
+branching factor $b$ and depth $d$—or by $N^2$ in a simple grid, so A* reduces the search effort by expanding
 only the lowest cost nodes.
 
 A* operates on a graph where nodes represent positions and edges represent

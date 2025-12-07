@@ -90,10 +90,10 @@ inline void examplePrint() {
     std::cout << "Example 7 - Map E - Unsolvable" << std::endl;
     wait(wait_time);
     AStar astar7('e');
-    astar7.setLivePrintSpeed(50);
+    astar7.setLivePrintSpeed(30);
     astar7.printMap();
     astar7.setHeuristic(MANHATTAN);
-    astar7.find({1, 1}, {27, 26}, true);
+    astar7.find({0, 0}, {15, 15}, true);
 }
 
 

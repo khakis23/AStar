@@ -2,6 +2,12 @@
 #include "PreDefinedGrids.h"
 
 
+/*
+ * TODO
+ *  - grids must be square (fix)
+ *  - toggleable corners
+ */
+
 /************************/
 /***** CONSTRUCTORS *****/
 /************************/
